@@ -14,7 +14,7 @@ patches:
 
       - op: replace
         path: /spec/template/spec/containers/0/env/1/value
-        value: "0.3"
+        value: "0.03"
       - op: replace
         path: /spec/template/spec/containers/0/env/0/value
-        value: "v2-quebrada"
+        value: "v3"
