@@ -11,9 +11,9 @@ dependency "vpc" {
   config_path                             = "../vpc"
   mock_outputs_allowed_terraform_commands = ["plan", "validate", "init"]
   mock_outputs = {
-    vpc_id          = "vpc-mock"
-    private_subnets = ["subnet-a", "subnet-b", "subnet-c"]
-    intra_subnets   = ["subnet-d", "subnet-e", "subnet-f"]
+    vpc_id         = "vpc-mock"
+    public_subnets = ["subnet-a", "subnet-b", "subnet-c"]
+    intra_subnets  = ["subnet-d", "subnet-e", "subnet-f"]
   }
 }
 
@@ -47,9 +47,9 @@ inputs = {
   eks_managed_node_groups = {
     sistema = {
       instance_types = ["t3.medium"]
-      min_size       = 2
-      max_size       = 3
-      desired_size   = 2
+      min_size       = 1 
+      max_size       = 2
+      desired_size   = 1
     }
   }
 

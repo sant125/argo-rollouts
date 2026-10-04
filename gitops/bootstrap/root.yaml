@@ -7,7 +7,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/SEU-USUARIO/rollout-lab.git
+    repoURL: https://github.com/sant125/argo-rollouts.git
     targetRevision: main
     path: gitops/argocd
   destination:
