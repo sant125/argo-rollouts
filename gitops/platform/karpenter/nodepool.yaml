@@ -15,6 +15,12 @@ spec:
         - key: karpenter.k8s.aws/instance-generation
           operator: Gt
           values: ["5"]
+        - key: karpenter.k8s.aws/instance-size # SCP da org só libera até *.large
+          operator: In
+          values: ["medium", "large"]
+        - key: kubernetes.io/arch # imagem do demo é buildada em amd64
+          operator: In
+          values: ["amd64"]
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
