@@ -38,7 +38,7 @@ if ! git -C "$ROOT" diff --quiet -- "$lb" "$karp" "$np"; then
   git -C "$ROOT" --no-pager diff -- "$lb" "$karp" "$np"
   if confirm "Os outputs mudaram. Commit + push pra main (o ArgoCD lê de lá)?"; then
     git -C "$ROOT" add -- "$lb" "$karp" "$np"
-    git -C "$ROOT" commit -m "lab: atualiza manifests com outputs do terraform" -- "$lb" "$karp" "$np"
+    git -C "$ROOT" commit -m "outputs tf" -- "$lb" "$karp" "$np"
     git -C "$ROOT" push
   else
     warn "Sem push, o ArgoCD vai aplicar os valores antigos que estão no Git."
@@ -86,11 +86,16 @@ for _ in $(seq 60); do
 done
 
 pass=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' 2>/dev/null | base64 -d || true)
+if [[ -n $host ]]; then
+  demo="http://$host  (o DNS do ALB leva uns minutos pra propagar)"
+else
+  demo="ingress ainda sem endereço: kubectl -n demo get ingress"
+fi
 cat <<EOF
 
 Pronto.
   ArgoCD:  kubectl -n argocd port-forward svc/argocd-server 8080:443  →  https://localhost:8080
            usuário admin | senha ${pass:-"(kubectl -n argocd get secret argocd-initial-admin-secret)"}
-  Demo:    ${host:+http://$host  (o DNS do ALB leva uns minutos pra propagar)}${host:-"ingress ainda sem endereço: kubectl -n demo get ingress"}
+  Demo:    $demo
   Apps:    kubectl -n argocd get applications
 EOF
