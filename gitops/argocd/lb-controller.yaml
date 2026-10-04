@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-load-balancer-controller
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://aws.github.io/eks-charts
+    chart: aws-load-balancer-controller
+    targetRevision: 3.5.0
+    helm:
+      valuesObject:
+        clusterName: lab-dev
+        region: us-east-1
+        vpcId: TROCAR
+        serviceAccount:
+          name: aws-load-balancer-controller # bate com a associação do Pod Identity
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true]
+    retry: # CRD de outra Application pode ainda não existir: tenta de novo
+      limit: 10
+      backoff: {duration: 30s, factor: 2, maxDuration: 5m}

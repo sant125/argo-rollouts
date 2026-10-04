@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo
+  labels:
+    elbv2.k8s.aws/pod-readiness-gate-inject: enabled # pod só fica pronto quando o ALB confirma
+    pod-security.kubernetes.io/enforce: restricted

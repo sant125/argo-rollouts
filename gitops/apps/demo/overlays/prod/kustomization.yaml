@@ -1,0 +1,7 @@
+resources: [../../base]
+images:
+  - name: rollout-demo
+    newName: TROCAR.dkr.ecr.us-east-1.amazonaws.com/rollout-demo
+    digest: sha256:TROCAR # o mesmo digest que passou em dev
+patches:
+  - path: rollout.yaml

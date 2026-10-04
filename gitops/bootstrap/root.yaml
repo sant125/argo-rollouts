@@ -1,0 +1,17 @@
+# App of apps: o ArgoCD lê a pasta argocd/ e cria uma Application pra cada arquivo
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/SEU-USUARIO/rollout-lab.git
+    targetRevision: main
+    path: gitops/argocd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}

@@ -1,0 +1,16 @@
+resources: [../../base]
+images:
+  - name: rollout-demo
+    newName: TROCAR.dkr.ecr.us-east-1.amazonaws.com/rollout-demo
+    newTag: v1
+# Rollout é CRD: patch por merge substituiria a lista de containers inteira.
+# Por isso o patch aponta o campo exato.
+#
+# A demonstração: troque "0" por "0.3" e faça commit. O canary sobe, a análise
+# vê mais de 5% de erro, e o Rollout volta sozinho.
+patches:
+  - target: {kind: Rollout, name: rollout-demo}
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/value
+        value: "0"

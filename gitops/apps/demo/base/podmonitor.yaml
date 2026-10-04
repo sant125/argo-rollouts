@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: rollout-demo
+  namespace: demo
+spec:
+  selector:
+    matchLabels: {app: rollout-demo}
+  podMetricsEndpoints:
+    - {port: http, path: /metrics, interval: 15s}
+  podTargetLabels: [rollouts-pod-template-hash] # vira rollouts_pod_template_hash na métrica

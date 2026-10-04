@@ -1,0 +1,13 @@
+# O chart do Karpenter é OCI: o ArgoCD precisa saber disso
+apiVersion: v1
+kind: Secret
+metadata:
+  name: karpenter-oci
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: helm
+  name: karpenter
+  url: public.ecr.aws/karpenter
+  enableOCI: "true"

@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/SEU-USUARIO/rollout-lab.git
+    targetRevision: main
+    path: gitops/apps/demo/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true]
+    retry: # CRD de outra Application pode ainda não existir: tenta de novo
+      limit: 10
+      backoff: {duration: 30s, factor: 2, maxDuration: 5m}

@@ -1,0 +1,7 @@
+resources:
+  - namespace.yaml
+  - rollout.yaml
+  - services.yaml
+  - ingress.yaml
+  - analysis.yaml
+  - podmonitor.yaml

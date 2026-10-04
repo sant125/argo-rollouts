@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: taxa-de-erro
+  namespace: demo
+spec:
+  args:
+    - name: canary-hash
+  metrics:
+    - name: taxa-de-erro
+      initialDelay: 30s # espera a primeira coleta
+      interval: 30s
+      failureLimit: 1
+      # NaN = ainda sem tráfego no canary; acima de 5% de erro = volta
+      successCondition: isNaN(result[0]) || result[0] <= 0.05
+      provider:
+        prometheus:
+          address: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+          query: |
+            sum(rate(http_requests_total{code="500", rollouts_pod_template_hash="{{args.canary-hash}}"}[1m]))
+            /
+            sum(rate(http_requests_total{rollouts_pod_template_hash="{{args.canary-hash}}"}[1m]))

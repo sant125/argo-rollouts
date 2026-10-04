@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollout-demo
+  namespace: demo
+spec:
+  replicas: 4
+  selector:
+    matchLabels: {app: rollout-demo}
+  template:
+    metadata:
+      labels: {app: rollout-demo}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: app
+          image: rollout-demo
+          ports:
+            - {name: http, containerPort: 8080}
+          env:
+            - {name: VERSION, value: v1}
+            - {name: ERROR_RATE, value: "0"}
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+          lifecycle:
+            preStop:
+              sleep: {seconds: 15} # distroless não tem shell: sleep nativo do Kubernetes
+          resources:
+            requests: {cpu: 50m, memory: 32Mi}
+            limits: {memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+  strategy:
+    canary:
+      stableService: rollout-demo-stable
+      canaryService: rollout-demo-canary
+      trafficRouting:
+        alb:
+          ingress: rollout-demo
+          servicePort: 80
+      analysis:
+        templates:
+          - templateName: taxa-de-erro
+        startingStep: 1 # começa a medir depois que o canary recebe tráfego
+        args:
+          - name: canary-hash
+            valueFrom:
+              podTemplateHashValue: Latest
+      steps:
+        - setWeight: 10
+        - pause: {duration: 1m}
+        - setWeight: 30
+        - pause: {duration: 1m}
+        - setWeight: 60
+        - pause: {duration: 1m}
