@@ -11,6 +11,7 @@ spec:
     targetRevision: 1.14.1
     helm:
       valuesObject:
+        replicas: 1
         settings:
           clusterName: lab-dev
           interruptionQueue: "Karpenter-lab-dev"  
