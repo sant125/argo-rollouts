@@ -13,7 +13,7 @@ spec:
       valuesObject:
         clusterName: lab-dev
         region: us-east-1
-        vpcId: TROCAR
+        vpcId: "vpc-0f27b14b3ae1576a1" 
         serviceAccount:
           name: aws-load-balancer-controller # bate com a associação do Pod Identity
   destination:
