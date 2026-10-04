@@ -31,14 +31,23 @@ if cluster_exists; then
 
   if kubectl get crd applications.argoproj.io >/dev/null 2>&1; then
     log "Pausando o auto-sync do ArgoCD (senão ele recria o que vou apagar)"
-    for app in $(kubectl -n argocd get applications -o name); do
-      kubectl -n argocd patch "$app" --type json \
+    # root primeiro: com auto-sync ele devolve o automated pras outras apps (vem do Git)
+    for app in root $(kubectl -n argocd get applications -o name | sed 's|.*/||' | grep -vx root); do
+      kubectl -n argocd patch application "$app" --type json \
         -p '[{"op":"remove","path":"/spec/syncPolicy/automated"}]' >/dev/null 2>&1 || true
     done
+    sleep 5
+    if kubectl -n argocd get applications -o json | jq -e '[.items[].spec.syncPolicy.automated] | any' >/dev/null; then
+      die "ainda tem Application com auto-sync; o ArgoCD recriaria o ALB. Rode de novo."
+    fi
   fi
 
   log "Apagando Ingress e Services LoadBalancer (ALB/NLB)"
   kubectl delete ingress --all -A --wait --timeout=5m || true
+  sleep 15
+  if [[ $(kubectl get ingress -A --no-headers 2>/dev/null | wc -l) -gt 0 ]]; then
+    die "Ingress voltou depois de apagado (ArgoCD ainda sincronizando?). Abortando antes de destruir o EKS."
+  fi
   kubectl get svc -A -o json \
     | jq -r '.items[] | select(.spec.type=="LoadBalancer") | "\(.metadata.namespace) \(.metadata.name)"' \
     | while read -r ns name; do kubectl -n "$ns" delete svc "$name" --wait --timeout=5m || true; done
@@ -67,6 +76,8 @@ if cluster_exists; then
     [[ $lbs == 0 && $nodes == 0 ]] && break
     sleep 10
   done
+  # destruir o EKS com ALB ou nó de pé deixa órfão cobrando por hora
+  [[ $lbs == 0 && $nodes == 0 ]] || die "load balancer ou nó do Karpenter não saiu em 5 min. Confira antes de destruir o EKS."
 else
   warn "Cluster $CLUSTER não existe: pulando a limpeza do Kubernetes."
 fi
