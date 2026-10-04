@@ -30,7 +30,7 @@ kind: EC2NodeClass
 metadata:
   name: geral
 spec:
-  role: "Karpenter-lab-dev-3934b5f3b6de3025b383e6b519" # node_iam_role_name do terragrunt
+  role: lab-dev-karpenter-node # node_iam_role_name fixo na unit karpenter
   amiSelectorTerms:
     - alias: al2023@latest # lab; produção: versão fixa
   subnetSelectorTerms:

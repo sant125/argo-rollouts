@@ -14,7 +14,7 @@ spec:
         replicas: 1
         settings:
           clusterName: lab-dev
-          interruptionQueue: "Karpenter-lab-dev"  
+          interruptionQueue: "Karpenter-lab-dev"
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system

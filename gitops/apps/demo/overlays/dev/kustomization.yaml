@@ -1,7 +1,7 @@
 resources: [../../base]
 images:
   - name: rollout-demo
-    newName: TROCAR.dkr.ecr.us-east-1.amazonaws.com/rollout-demo
+    newName: 767866852518.dkr.ecr.us-east-1.amazonaws.com/rollout-demo
     newTag: v1
 # Rollout é CRD: patch por merge substituiria a lista de containers inteira.
 # Por isso o patch aponta o campo exato.

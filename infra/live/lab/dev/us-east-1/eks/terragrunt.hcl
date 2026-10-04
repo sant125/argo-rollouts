@@ -28,6 +28,9 @@ inputs = {
   endpoint_public_access       = true                # lab: kubectl do notebook
   endpoint_public_access_cidrs = [get_env("MEU_IP")] # export MEU_IP=$(curl -s https://checkip.amazonaws.com)/32
 
+  enabled_log_types           = [] # lab: sem logs do control plane (custo de ingestão no CloudWatch)
+  create_cloudwatch_log_group = false
+
   authentication_mode                      = "API"
   enable_cluster_creator_admin_permissions = true
 
@@ -47,7 +50,7 @@ inputs = {
   eks_managed_node_groups = {
     sistema = {
       instance_types = ["t3.medium"]
-      min_size       = 1 
+      min_size       = 1
       max_size       = 2
       desired_size   = 1
     }

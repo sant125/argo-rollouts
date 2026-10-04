@@ -11,7 +11,7 @@ terraform {
 
 dependency "eks" {
   config_path                             = "../eks"
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
+  mock_outputs_allowed_terraform_commands = ["init", "validate", "plan", "destroy"]
   mock_outputs                            = { cluster_name = "mock" }
 }
 
