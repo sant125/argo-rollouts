@@ -11,10 +11,6 @@ images:
 patches:
   - target: {kind: Rollout, name: rollout-demo}
     patch: |-
-
       - op: replace
         path: /spec/template/spec/containers/0/env/1/value
-        value: "0.3"
-      - op: replace
-        path: /spec/template/spec/containers/0/env/0/value
-        value: "v2-quebrada"
+        value: "0"
