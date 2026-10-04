@@ -11,8 +11,10 @@ spec:
       initialDelay: 30s # espera a primeira coleta
       interval: 30s
       failureLimit: 1
-      # NaN = ainda sem tráfego no canary; acima de 5% de erro = volta
-      successCondition: isNaN(result[0]) || result[0] <= 0.05
+      # sem tráfego a query dá NaN, que não bate com nenhuma das duas: Inconclusive,
+      # e o Rollout pausa esperando promote/abort em vez de aprovar no escuro
+      successCondition: result[0] <= 0.05
+      failureCondition: result[0] > 0.05
       provider:
         prometheus:
           address: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
