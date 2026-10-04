@@ -13,7 +13,7 @@ spec:
       valuesObject:
         settings:
           clusterName: lab-dev
-          interruptionQueue: TROCAR
+          interruptionQueue: "Karpenter-lab-dev"  
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
